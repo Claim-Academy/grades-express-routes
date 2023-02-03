@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { Schema, model } from "mongoose";
 import config from "../config.js";
 
@@ -46,7 +47,18 @@ UserSchema.statics.login = async function (username, password) {
     isMatch = await bcrypt.compare(password, user.password);
   }
 
-  return isMatch ? user : null;
+  return isMatch
+    ? jwt.sign(
+        {
+          user: {
+            id: user._id,
+            username: user.username,
+          },
+        },
+        config.jwtSecret,
+        { expiresIn: config.jwtExpiresIn }
+      )
+    : null;
 };
 
 export default model("User", UserSchema);

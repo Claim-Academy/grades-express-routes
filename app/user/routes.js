@@ -12,12 +12,17 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  if (req.user) {
+    return res.json({ message: "You are already logged in" });
+  }
+
   const { username, password } = req.body;
 
-  const user = await userController.login(username, password);
-  if (user) {
-    // TODO: Send a JWT token
-    res.json(user);
+  // Will return a JWT token or null
+  const jwt = await userController.login(username, password);
+
+  if (jwt) {
+    res.json({ token: jwt });
   } else {
     res.status(401).json({ message: "Invalid credentials" });
   }
