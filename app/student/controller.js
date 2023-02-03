@@ -1,16 +1,4 @@
-import mongoose from "mongoose";
-import config from "../config.js";
 import Student from "./Student.js";
-
-mongoose.set("strictQuery", true);
-mongoose
-  .connect(config.dbConn)
-  .then(() => {
-    console.info("Connected to the database");
-  })
-  .catch((err) => {
-    console.error("Error connecting to the database", err);
-  });
 
 const controller = {
   getStudents() {
