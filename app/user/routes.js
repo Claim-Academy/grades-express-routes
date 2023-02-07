@@ -1,4 +1,5 @@
 import { Router } from "express";
+import mongoose from "mongoose";
 import userController from "./controller.js";
 
 const router = new Router();
@@ -6,7 +7,13 @@ const router = new Router();
 router.post("/create", async (req, res) => {
   const { username, password } = req.body;
 
-  const user = await userController.create(username, password);
+  const user = await userController.create(username, password).catch((err) => {
+    if (err instanceof mongoose.Error.ValidationError) {
+      res.status(400).json({ message: err.message });
+    } else {
+      res.status(500).json({ message: err.message });
+    }
+  });
 
   res.json(user);
 });
