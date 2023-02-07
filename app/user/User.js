@@ -21,7 +21,6 @@ const UserSchema = new Schema({
     required: [true, "Password is required"],
     minLength: [3, "Password must be at least 3 characters long"],
     trim: true,
-    //  TODO: Add a custom validator for password
   },
 });
 
