@@ -7,19 +7,23 @@ const router = new Router();
 router.post("/create", async (req, res) => {
   const { username, password } = req.body;
 
-  await userController.create(username, password).catch((err) => {
-    if (err instanceof mongoose.Error.ValidationError) {
-      res.status(400).json({ message: err.message });
-    } else {
-      res.status(500).json({ message: err.message });
-    }
-  });
-
-  // Login the user after creating the account
-  const jwt = await userController.login(username, password).catch((err) => {
-    res.status(500).json({ message: err.message });
-  });
-  res.json({ token: jwt });
+  userController
+    .create(username, password)
+    .then(() => {
+      userController.login(username, password).catch((err) => {
+        res.status(500).json({ message: err.message });
+      });
+    })
+    .then((jwt) => {
+      res.json({ token: jwt });
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        res.status(400).json({ message: err.message });
+      } else {
+        res.status(500).json({ message: err.message });
+      }
+    });
 });
 
 router.post("/login", async (req, res) => {
