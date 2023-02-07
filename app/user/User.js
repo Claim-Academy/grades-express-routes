@@ -3,8 +3,6 @@ import jwt from "jsonwebtoken";
 import { Schema, model } from "mongoose";
 import config from "../config.js";
 
-// TODO: Use 'toLowerCase' for username
-
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -28,6 +26,8 @@ const UserSchema = new Schema({
 });
 
 UserSchema.pre("save", async function (next) {
+  this.username = this.username.trim().toLowerCase();
+
   // * Only hash the password if it has been modified (or is new)
   if (this.isModified("password")) {
     const generatedSalt = await bcrypt.genSalt(config.saltRounds);
