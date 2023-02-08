@@ -20,6 +20,8 @@ router.post("/create", async (req, res) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         res.status(400).json({ message: err.message });
+      } else if (err.message === "User already exists") {
+        res.status(409).json({ message: err.message });
       } else {
         res.status(500).json({ message: err.message });
       }
